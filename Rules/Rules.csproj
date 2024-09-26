@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <VersionPrefix>1.21.0</VersionPrefix>
-    <TargetFrameworks>net6;net462</TargetFrameworks>
+    <TargetFramework>net6</TargetFramework>
     <AssemblyName>Microsoft.Windows.PowerShell.ScriptAnalyzer.BuiltinRules</AssemblyName>
     <AssemblyVersion>1.21.0</AssemblyVersion>
     <PackageId>Rules</PackageId>

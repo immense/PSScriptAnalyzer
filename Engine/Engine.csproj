@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <VersionPrefix>1.21.0</VersionPrefix>
-    <TargetFrameworks>net6;net462</TargetFrameworks>
+    <TargetFramework>net6</TargetFramework>
     <AssemblyName>Microsoft.Windows.PowerShell.ScriptAnalyzer</AssemblyName>
     <AssemblyVersion>1.21.0</AssemblyVersion>
     <PackageId>Engine</PackageId>
@@ -78,15 +78,15 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' AND '$(Configuration)' == 'PSV4Release'">
     <PackageReference Include="Microsoft.PowerShell.4.ReferenceAssemblies" Version="1.0.0" />
   </ItemGroup>
-   
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net462' AND '$(Configuration)' != 'PSV3Release'">
     <PackageReference Include="Microsoft.PowerShell.5.ReferenceAssemblies" Version="1.1.0" />
   </ItemGroup>
-   
+
   <PropertyGroup Condition=" '$(Configuration)' == 'PSV3Release' ">
     <DefineConstants>$(DefineConstants);PSV3</DefineConstants>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(Configuration)' == 'PSV4Release' ">
     <DefineConstants>$(DefineConstants);PSV3;PSV4</DefineConstants>
   </PropertyGroup>
@@ -94,7 +94,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'PSV3Debug' ">
     <DefineConstants>$(DefineConstants);PSV3</DefineConstants>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(Configuration)' == 'PSV4Debug' ">
     <DefineConstants>$(DefineConstants);PSV3;PSV4</DefineConstants>
   </PropertyGroup>
