@@ -4,6 +4,7 @@
     <VersionPrefix>1.21.0</VersionPrefix>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyVersion>1.21.0</AssemblyVersion>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
