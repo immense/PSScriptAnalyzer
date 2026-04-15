@@ -40,7 +40,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.403
-          cache: true
 
       - name: Install PlatyPS
         shell: pwsh
