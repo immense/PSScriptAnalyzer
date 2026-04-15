@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <PSESBundledModulePath Condition="'$(PSESBundledModulePath)' == ''">PSESBundledModules</PSESBundledModulePath>
+    <PSScriptAnalyzerSourceVersion Condition="'$(PSScriptAnalyzerSourceVersion)' == '' and Exists('$(MSBuildThisFileDirectory)..\..\..\Engine\Engine.csproj')">$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\..\..\Engine\Engine.csproj')), '&lt;VersionPrefix&gt;([^&lt;]+)&lt;/VersionPrefix&gt;').Groups[1].Value)</PSScriptAnalyzerSourceVersion>
+  </PropertyGroup>
+</Project>

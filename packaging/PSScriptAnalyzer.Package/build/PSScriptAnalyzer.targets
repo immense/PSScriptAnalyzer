@@ -1,0 +1,31 @@
+<Project>
+  <PropertyGroup>
+    <_PSSAImportedRoot Condition="Exists('$(MSBuildThisFileDirectory)..\PSScriptAnalyzer\PSScriptAnalyzer.psd1')">$([MSBuild]::EnsureTrailingSlash('$(MSBuildThisFileDirectory)..\PSScriptAnalyzer'))</_PSSAImportedRoot>
+    <_PSSAImportedRoot Condition="'$(_PSSAImportedRoot)' == '' and '$(PSScriptAnalyzerSourceVersion)' != '' and Exists('$(MSBuildThisFileDirectory)..\..\..\out\PSScriptAnalyzer\$(PSScriptAnalyzerSourceVersion)\PSScriptAnalyzer.psd1')">$([MSBuild]::EnsureTrailingSlash('$(MSBuildThisFileDirectory)..\..\..\out\PSScriptAnalyzer\$(PSScriptAnalyzerSourceVersion)'))</_PSSAImportedRoot>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(_PSSAImportedRoot)' != ''">
+    <Reference Include="Microsoft.Windows.PowerShell.ScriptAnalyzer" Condition="Exists('$(_PSSAImportedRoot)PSv7\Microsoft.Windows.PowerShell.ScriptAnalyzer.dll')">
+      <HintPath>$(_PSSAImportedRoot)PSv7\Microsoft.Windows.PowerShell.ScriptAnalyzer.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Microsoft.Windows.PowerShell.ScriptAnalyzer.BuiltinRules" Condition="Exists('$(_PSSAImportedRoot)PSv7\Microsoft.Windows.PowerShell.ScriptAnalyzer.BuiltinRules.dll')">
+      <HintPath>$(_PSSAImportedRoot)PSv7\Microsoft.Windows.PowerShell.ScriptAnalyzer.BuiltinRules.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Microsoft.PowerShell.CrossCompatibility" Condition="Exists('$(_PSSAImportedRoot)PSv7\Microsoft.PowerShell.CrossCompatibility.dll')">
+      <HintPath>$(_PSSAImportedRoot)PSv7\Microsoft.PowerShell.CrossCompatibility.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Content Include="$(_PSSAImportedRoot)**\*"
+      TargetPath="$(PSESBundledModulePath)\PSScriptAnalyzer\%(RecursiveDir)%(Filename)%(Extension)"
+      CopyToOutputDirectory="PreserveNewest"
+      CopyToPublishDirectory="PreserveNewest" />
+
+    <Content Include="$(_PSSAImportedRoot)PSv7\*.dll"
+      TargetPath="%(Filename)%(Extension)"
+      CopyToOutputDirectory="PreserveNewest"
+      CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
