@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.Build.NoTargets/3.7.134">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <PackageId>PSScriptAnalyzer</PackageId>
+    <Description>Private Immense package containing the PSScriptAnalyzer binaries and bundled module assets used by immybot.</Description>
+    <Authors>Immense Networks</Authors>
+    <RepositoryUrl>https://github.com/immense/PSScriptAnalyzer</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <PSScriptAnalyzerSourceVersion Condition="'$(PSScriptAnalyzerSourceVersion)' == ''">$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)..\..\Engine\Engine.csproj')), '&lt;VersionPrefix&gt;([^&lt;]+)&lt;/VersionPrefix&gt;').Groups[1].Value)</PSScriptAnalyzerSourceVersion>
+    <PSScriptAnalyzerSourceRoot Condition="'$(PSScriptAnalyzerSourceRoot)' == ''">$(MSBuildThisFileDirectory)..\..\out\PSScriptAnalyzer\$(PSScriptAnalyzerSourceVersion)\</PSScriptAnalyzerSourceRoot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="build\PSScriptAnalyzer.props" Pack="true" PackagePath="build\PSScriptAnalyzer.props" />
+    <None Include="build\PSScriptAnalyzer.targets" Pack="true" PackagePath="build\PSScriptAnalyzer.targets" />
+    <None Include="$(PSScriptAnalyzerSourceRoot)**\*" Pack="true" PackagePath="PSScriptAnalyzer\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <Target Name="ValidatePssaPackageSourceRoot" BeforeTargets="Pack">
+    <Error
+      Condition="!Exists('$(PSScriptAnalyzerSourceRoot)PSScriptAnalyzer.psd1')"
+      Text="Expected built PSScriptAnalyzer module output at '$(PSScriptAnalyzerSourceRoot)'. Run `pwsh ./build.ps1 -Configuration Release -PSVersion 7` first or override PSScriptAnalyzerSourceRoot." />
+  </Target>
+</Project>
