@@ -707,7 +707,7 @@ namespace Microsoft.Windows.PowerShell.ScriptAnalyzer
 #if CORECLR
             // For Full CLR logger is loaded via Composition
             // But for Core CLR we need to load it explicitly
-            this.Loggers = GetInterfaceImplementationsFromAssembly<ILogger>();
+            this.Loggers = GetInterfaceImplementationsFromAssembly<ILogger>(typeof(ScriptAnalyzer).GetTypeInfo().Assembly);
 #endif
             #region Initializes Rules
 
@@ -866,36 +866,12 @@ namespace Microsoft.Windows.PowerShell.ScriptAnalyzer
         }
 
 
-        private IEnumerable<T> GetInterfaceImplementationsFromAssembly<T>() where T : class
+        private IEnumerable<T> GetInterfaceImplementationsFromAssembly<T>(Assembly assembly) where T : class
         {
-            string dirName = Path.GetDirectoryName(typeof(ScriptAnalyzer).GetTypeInfo().Assembly.Location);
-            var dllPaths = Directory.EnumerateFiles(dirName, "*.dll", SearchOption.TopDirectoryOnly);
-            var objects = new List<T>();
-            foreach (var dllPath in dllPaths)
-            {
-                outputWriter.WriteVerbose(string.Format("Found Assembly: {0}", dllPath));
-                var objectsFromOneFile = GetInterfaceImplementationsFromAssembly<T>(dllPath);
-                objects.AddRange(objectsFromOneFile);
-            }
-            return objects;
-        }
-
-        private IEnumerable<T> GetInterfaceImplementationsFromAssembly<T>(string ruleDllPath) where T : class
-        {
-            string fileName = Path.GetFileNameWithoutExtension(ruleDllPath);
-            var assemblyName = new AssemblyName(fileName);
-            outputWriter.WriteVerbose(string.Format("Loading Assembly:{0}", assemblyName.FullName));
-
-            Assembly dll = Assembly.Load(assemblyName);
-
-            if (dll == null)
-            {
-                outputWriter.WriteVerbose(string.Format("Cannot load {0}", ruleDllPath));
-                return Enumerable.Empty<T>();
-            }
+            outputWriter.WriteVerbose(string.Format("Loading Assembly:{0}", assembly.FullName));
 
             var rules = new List<T>();
-            foreach (Type type in dll.ExportedTypes)
+            foreach (Type type in assembly.ExportedTypes)
             {
                 if (type.IsInterface
                     || type.IsAbstract
@@ -927,9 +903,13 @@ namespace Microsoft.Windows.PowerShell.ScriptAnalyzer
             this.ExternalRules = null;
 
 #if CORECLR
-            this.ScriptRules = GetInterfaceImplementationsFromAssembly<IScriptRule>();
-            this.TokenRules = GetInterfaceImplementationsFromAssembly<ITokenRule>();
-            this.DSCResourceRules = GetInterfaceImplementationsFromAssembly<IDSCResourceRule>();
+            // Hosts can place the analyzer beside hundreds of unrelated assemblies.
+            // Built-in rules live in one known assembly; probing every adjacent DLL
+            // loads host code and can fail on dependencies that analysis never needs.
+            var builtInRules = Assembly.Load(new AssemblyName("Microsoft.Windows.PowerShell.ScriptAnalyzer.BuiltinRules"));
+            this.ScriptRules = GetInterfaceImplementationsFromAssembly<IScriptRule>(builtInRules);
+            this.TokenRules = GetInterfaceImplementationsFromAssembly<ITokenRule>(builtInRules);
+            this.DSCResourceRules = GetInterfaceImplementationsFromAssembly<IDSCResourceRule>(builtInRules);
 #else
             // An aggregate catalog that combines multiple catalogs.
             using (AggregateCatalog catalog = new AggregateCatalog())

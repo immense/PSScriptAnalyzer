@@ -191,6 +191,23 @@ Get-TestFailures
 The documentation in this section can be found in
 [Using PSScriptAnalyzer](https://learn.microsoft.com/powershell/utility-modules/psscriptanalyzer/using-scriptanalyzer).
 
+### Built-in assembly discovery in the Immense fork
+
+On PowerShell Core, built-in rules are loaded from
+`Microsoft.Windows.PowerShell.ScriptAnalyzer.BuiltinRules` and loggers from the
+analyzer engine assembly. Other DLLs beside the engine are not searched for rules
+or loggers. This avoids loading unrelated host assemblies on every analysis and
+prevents their missing dependencies from breaking analysis.
+
+`-IncludeRule` and `-ExcludeRule` select rules after discovery; they do not filter
+DLLs. Explicit PowerShell custom rules still use `-CustomRulePath`, including its
+existing wildcard and recursion support. Putting a custom compiled rule or logger
+DLL beside the engine no longer implicitly registers it on PowerShell Core. This
+change does not add compiled custom-rule support to the Core implementation.
+
+See [rule discovery measurements](docs/RuleDiscoveryPerformance.md) for a
+reproducible before/after benchmark and its limits.
+
 ## Contributions are welcome
 
 There are many ways to contribute:
